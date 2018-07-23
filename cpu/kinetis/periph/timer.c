@@ -67,6 +67,7 @@ typedef struct {
     uint32_t ldval;
 } pit_t;
 
+#ifdef KINETIS_HAVE_LPTMR
 /* LPTMR state */
 typedef struct {
     timer_isr_ctx_t isr_ctx;
@@ -74,21 +75,30 @@ typedef struct {
     uint32_t cmr;
     uint32_t running;
 } lptmr_t;
+#endif
 
 static const pit_conf_t pit_config[PIT_NUMOF] = PIT_CONFIG;
+#ifdef KINETIS_HAVE_LPTMR
 static const lptmr_conf_t lptmr_config[LPTMR_NUMOF] = LPTMR_CONFIG;
+#endif
 
 static pit_t pit[PIT_NUMOF];
+#ifdef KINETIS_HAVE_LPTMR
 static lptmr_t lptmr[LPTMR_NUMOF];
+#endif
 
 /**
  * @brief  Find out whether a given timer is a LPTMR or a PIT timer
  */
 static inline unsigned int _timer_variant(tim_t dev) {
+#ifdef KINETIS_HAVE_LPTMR
     if ((unsigned int) dev >= PIT_NUMOF) {
         return TIMER_LPTMR;
     }
-    else {
+    else
+#endif
+    {
+        (void) dev;
         return TIMER_PIT;
     }
 }
@@ -107,6 +117,7 @@ static inline tim_t _pit_tim_t(uint8_t dev) {
     return (tim_t)(((unsigned int)TIMER_DEV(0)) + dev);
 }
 
+#ifdef KINETIS_HAVE_LPTMR
 /**
  * @brief  Find device index in the lptmr_config array
  */
@@ -120,6 +131,7 @@ static inline unsigned int _lptmr_index(tim_t dev) {
 static inline tim_t _lptmr_tim_t(uint8_t dev) {
     return (tim_t)(((unsigned int)TIMER_DEV(0)) + PIT_NUMOF + dev);
 }
+#endif
 
 /* ****** PIT module functions ****** */
 
@@ -284,6 +296,7 @@ static inline void pit_irq_handler(tim_t dev)
     cortexm_isr_end();
 }
 
+#ifdef KINETIS_HAVE_LPTMR
 /* ****** LPTMR module functions ****** */
 
 /* Forward declarations */
@@ -576,6 +589,7 @@ static inline void lptmr_irq_handler(tim_t tim)
     cortexm_isr_end();
 }
 
+#endif
 /* ****** Common timer API functions ****** */
 
 int timer_init(tim_t dev, unsigned long freq, timer_cb_t cb, void *arg)
@@ -588,8 +602,10 @@ int timer_init(tim_t dev, unsigned long freq, timer_cb_t cb, void *arg)
     switch (_timer_variant(dev)) {
         case TIMER_PIT:
             return pit_init(_pit_index(dev), freq, cb, arg);
+#ifdef KINETIS_HAVE_LPTMR
         case TIMER_LPTMR:
             return lptmr_init(_lptmr_index(dev), freq, cb, arg);
+#endif
         default:
             return -1;
     }
@@ -609,8 +625,10 @@ int timer_set(tim_t dev, int channel, unsigned int timeout)
     switch (_timer_variant(dev)) {
         case TIMER_PIT:
             return pit_set(_pit_index(dev), timeout);
+#ifdef KINETIS_HAVE_LPTMR
         case TIMER_LPTMR:
             return lptmr_set(_lptmr_index(dev), timeout);
+#endif
         default:
             return -1;
     }
@@ -630,8 +648,10 @@ int timer_set_absolute(tim_t dev, int channel, unsigned int target)
     switch (_timer_variant(dev)) {
         case TIMER_PIT:
             return pit_set_absolute(_pit_index(dev), target);
+#ifdef KINETIS_HAVE_LPTMR
         case TIMER_LPTMR:
             return lptmr_set_absolute(_lptmr_index(dev), target);;
+#endif
         default:
             return -1;
     }
@@ -653,8 +673,10 @@ int timer_clear(tim_t dev, int channel)
     switch (_timer_variant(dev)) {
         case TIMER_PIT:
             return pit_clear(_pit_index(dev));
+#ifdef KINETIS_HAVE_LPTMR
         case TIMER_LPTMR:
             return lptmr_clear(_lptmr_index(dev));
+#endif
         default:
             return -1;
     }
@@ -672,8 +694,10 @@ unsigned int timer_read(tim_t dev)
     switch (_timer_variant(dev)) {
         case TIMER_PIT:
             return pit_read(_pit_index(dev));
+#ifdef KINETIS_HAVE_LPTMR
         case TIMER_LPTMR:
             return lptmr_read(_lptmr_index(dev));
+#endif
         default:
             return 0;
     }
@@ -690,9 +714,11 @@ void timer_start(tim_t dev)
         case TIMER_PIT:
             pit_start(_pit_index(dev));
             return;
+#ifdef KINETIS_HAVE_LPTMR
         case TIMER_LPTMR:
             lptmr_start(_lptmr_index(dev));
             return;
+#endif
         default:
             return;
     }
@@ -709,9 +735,11 @@ void timer_stop(tim_t dev)
         case TIMER_PIT:
             pit_stop(_pit_index(dev));
             return;
+#ifdef KINETIS_HAVE_LPTMR
         case TIMER_LPTMR:
             lptmr_stop(_lptmr_index(dev));
             return;
+#endif
         default:
             return;
     }

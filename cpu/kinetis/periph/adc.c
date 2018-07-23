@@ -162,9 +162,11 @@ int adc_init(adc_t line)
     prep(line);
 
     /* configure the connected pin mux */
+#ifdef KINETIS_HAVE_PCR
     if (adc_config[line].pin != GPIO_UNDEF) {
         gpio_init_port(adc_config[line].pin, GPIO_AF_ANALOG);
     }
+#endif
 
     /* The ADC requires at least 2 MHz module clock for full accuracy, and less
      * than 12 MHz */

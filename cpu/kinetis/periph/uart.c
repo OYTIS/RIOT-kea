@@ -164,12 +164,20 @@ void uart_write(uart_t uart, const uint8_t *data, size_t len)
 static inline void uart_init_pins(uart_t uart)
 {
     /* initialize pins */
+#ifdef KINETIS_HAVE_PCR
     if (uart_config[uart].pin_rx != GPIO_UNDEF) {
         gpio_init_port(uart_config[uart].pin_rx, uart_config[uart].pcr_rx);
     }
     if (uart_config[uart].pin_tx != GPIO_UNDEF) {
         gpio_init_port(uart_config[uart].pin_tx, uart_config[uart].pcr_tx);
     }
+#endif
+#ifdef KINETIS_HAVE_PINSEL
+    if (uart_config[uart].pinsel != NULL) {
+        *uart_config[uart].pinsel &= ~uart_config[uart].pinsel_mask;
+        *uart_config[uart].pinsel |= uart_config[uart].pinsel_val;
+    }
+#endif
 }
 
 #if KINETIS_HAVE_UART
@@ -267,7 +275,7 @@ static inline void irq_handler_uart(uart_t uart)
 #if (KINETIS_UART_ADVANCED == 0)
     /* clear overrun flag */
     if (dev->S1 & UART_S1_OR_MASK) {
-        dev->S1 = UART_S1_OR_MASK;
+        uint8_t __attribute__((unused)) dummy = dev->D;
     }
 #endif
 

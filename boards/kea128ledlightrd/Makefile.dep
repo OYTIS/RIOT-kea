@@ -1,0 +1,2 @@
+USEMODULE += can_kea_mscan
+include $(RIOTCPU)/kinetis/Makefile.dep
