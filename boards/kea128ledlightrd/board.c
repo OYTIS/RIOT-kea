@@ -25,6 +25,14 @@
 
 extern void SystemInit(void);
 
+const candev_kea_conf_t candev_kea_config[] = {
+    {
+        .clock_freq    = CLOCK_BUSCLOCK,
+        .params.name   = "can0",
+//        .params.trx    = can_trx_gpio,
+    },
+};
+
 void board_init(void)
 {
     /* initialize clocks */

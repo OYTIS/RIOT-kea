@@ -1,2 +1,8 @@
-USEMODULE += can_kea_mscan
+ifneq (,$(filter can,$(USEMODULE)))
+  USEMODULE += can_kea_mscan
+  CFLAGS += -DCAN_DLL_NUMOF=1
+endif
+
+USEMODULE += rtt_stdio
+
 include $(RIOTCPU)/kinetis/Makefile.dep

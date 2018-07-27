@@ -432,7 +432,7 @@ static int _set_filter(candev_t *dev, const struct can_filter *filter) {
     }
 
     uint32_t can_id = filter->can_id;
-    uint32_t mask = filter->can_mask;
+    uint32_t mask = ~filter->can_mask; // MSCAN's masks are inverted, i.e. 1 is 'don't care'
     if(can_id & 0x80000000) { // CAN 2.0B ID
         canidar_bank[0] = (can_id >> 21) & 0xFF;
         canidar_bank[1] = ((can_id >> 15) & 0x07) |

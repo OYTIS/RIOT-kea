@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2014 Freie Universität Berlin
  * Copyright (C) 2015 PHYTEC Messtechnik GmbH
+ * Copyright (C) 2018 HERE Deutschland GmbH
  *
  * This file is subject to the terms and conditions of the GNU Lesser General
  * Public License v2.1. See the file LICENSE in the top level directory for more
@@ -12,15 +13,20 @@
  * @{
  *
  * @file
- * @name        Peripheral MCU configuration for the FRDM-K64F
+ * @name        Peripheral MCU configuration for KEA128LEDLIGHTRD
  *
  * @author      Johann Fischer <j.fischer@phytec.de>
+ * @author      Anton Gerasimov <anton.gerasimov@here.com>
  */
 
 #ifndef PERIPH_CONF_H
 #define PERIPH_CONF_H
 
 #include "periph_cpu.h"
+
+#ifdef MODULE_CAN_KEA_MSCAN
+#include "mscan.h"
+#endif
 
 #ifdef __cplusplus
 extern "C"
@@ -54,27 +60,14 @@ extern "C"
 #define PIT_ISR_1               isr_pit3
 /** @} */
 
+#ifdef MODULE_CAN_KEA_MSCAN
 /**
-* @name UART configuration
+* @name CAN configuration
 * @{
 */
-static const uart_conf_t uart_config[] = {
-    {
-        .dev    = UART0,
-        .freq   = CLOCK_CORECLOCK,
-        .irqn   = UART0_IRQn,
-        .scgc_addr = &SIM->SCGC,
-        .scgc_bit = SIM_SCGC_UART0_SHIFT,
-        .mode   = UART_MODE_8N1,
-        .type   = KINETIS_UART,
-    },
-};
 
-#define UART_0_ISR          (isr_uart0_rx_tx)
-
-#define UART_NUMOF          (sizeof(uart_config) / sizeof(uart_config[0]))
-/** @} */
-
+extern const candev_kea_conf_t candev_kea_config[];
+#endif
 #ifdef __cplusplus
 }
 #endif
