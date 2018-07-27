@@ -36,12 +36,14 @@ int tja1042_trx_set_mode(can_trx_t *dev, can_trx_mode_t mode)
     switch (mode) {
     case TRX_NORMAL_MODE:
     case TRX_SILENT_MODE:
-        gpio_clear(tja1042->stb_pin);
+        //gpio_clear(tja1042->stb_pin);
+        gpio_set(tja1042->stb_pin);
         ret = 0;
         break;
 
     case TRX_SLEEP_MODE:
-        gpio_set(tja1042->stb_pin);
+        //gpio_set(tja1042->stb_pin);
+        gpio_clear(tja1042->stb_pin);
         ret = 0;
         break;
 

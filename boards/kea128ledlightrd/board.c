@@ -22,14 +22,20 @@
 
 #include "board.h"
 #include "periph/gpio.h"
+#include "tja1042.h"
 
 extern void SystemInit(void);
 
+static tja1042_trx_t tja1042 = {
+        .trx.driver = &tja1042_driver,
+	.stb_pin = GPIO_PIN(PORT_A, 24),
+};
+
 const candev_kea_conf_t candev_kea_config[] = {
     {
-        .clock_freq    = CLOCK_BUSCLOCK,
+        .clock_freq    = CLOCK_BUSCLOCK/2,
         .params.name   = "can0",
-//        .params.trx    = can_trx_gpio,
+        .params.trx    = (can_trx_t*)&tja1042,
     },
 };
 

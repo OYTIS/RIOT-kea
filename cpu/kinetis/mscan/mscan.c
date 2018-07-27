@@ -94,7 +94,7 @@ void isr_mscan_tx(void)
     if(bufmask) {
       last_tflg |= bufmask;
       MSCAN->CANTFLG |= bufmask;
-      //MSCAN->CANTIER &= ~(1 << i);
+      MSCAN->CANTIER &= ~bufmask;
     }
     _dev->event_callback(_dev, CANDEV_EVENT_ISR, NULL);
 }
