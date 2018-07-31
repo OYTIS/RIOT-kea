@@ -1,0 +1,11 @@
+ifneq (,$(filter can,$(USEMODULE)))
+  USEMODULE += can_kea_mscan
+  CFLAGS += -DCAN_DLL_NUMOF=1
+endif
+
+USEMODULE += rtt_stdio
+
+# setup clock to run at 40MHz
+CFLAGS += -DCLOCK_SETUP=1
+
+include $(RIOTCPU)/kinetis/Makefile.dep
