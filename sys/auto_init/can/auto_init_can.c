@@ -53,4 +53,9 @@ void auto_init_candev(void)
     extern void auto_init_can_native(void);
     auto_init_can_native();
 #endif
+
+#ifdef MODULE_CAN_KEA_MSCAN
+    extern void auto_init_can_kea_mscan(void);
+    auto_init_can_kea_mscan();
+#endif
 }
